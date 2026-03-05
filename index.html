@@ -2,195 +2,297 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aeterna | Capture the pulse.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aeterna | 5s Instax Frame</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;600;800&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Nanum+Pen+Script&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 50%, #f0f9ff 100%);
-            --glass: rgba(255, 255, 255, 0.75);
+            --bg-color: #f6f8fb;
+            --btn-gradient: linear-gradient(90deg, #ff8da1 0%, #ffb6b9 100%);
+            --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
         }
 
         body {
-            background: var(--primary-gradient);
-            background-attachment: fixed;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #1e293b;
+            background-color: #f6f8fb;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 230, 235, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(220, 235, 255, 0.4) 0%, transparent 50%);
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #333;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; position: relative; margin: 0; padding-bottom: 1rem;
         }
 
-        .blob {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(219,234,254,0.6) 0%, rgba(255,255,255,0) 70%);
-            z-index: -1;
-            filter: blur(40px);
-            animation: move 20s infinite alternate;
-        }
+        /* --- 漂浮背景 (絕對安全區) --- */
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(var(--rot)); } 50% { transform: translateY(-12px) rotate(calc(var(--rot) + 2deg)); } }
+        .floating-instax { position: absolute; width: 70px; height: 85px; background: rgba(255,255,255,0.8); padding: 4px 4px 15px 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-radius: 2px; animation: float 6s infinite ease-in-out; backdrop-filter: blur(2px); }
+        .floating-instax::after { content: ""; display: block; width: 100%; height: 100%; background: linear-gradient(135deg, #ffe0e5 0%, #ffecd2 100%); opacity: 0.5; }
+        .fi-1 { top: 12%; left: calc(50% - 320px); --rot: -10deg; animation-delay: 0s; }
+        .fi-2 { top: 22%; right: calc(50% - 320px); --rot: 12deg; animation-delay: -2s; }
+        .fi-3 { bottom: 18%; left: calc(50% - 280px); --rot: 8deg; animation-delay: -4s; }
+        .fi-4 { bottom: 12%; right: calc(50% - 280px); --rot: -15deg; animation-delay: -1s; }
+        @media (max-width: 600px) { .fi-1 { left: -15px; } .fi-2 { right: -15px; } .fi-3 { left: -25px; } .fi-4 { right: -25px; opacity: 0.5; } }
 
-        @keyframes move {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(20%, 20%); }
-        }
+        /* --- 緊湊型主視覺區 --- */
+        .main-wrapper { position: relative; z-index: 10; width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; padding-top: 1.5rem; }
+        .camera-icon { width: 42px; height: 32px; background-color: #ffcce0; border-radius: 6px; position: relative; margin-bottom: 0.2rem; display: flex; justify-content: center; align-items: center; transform: scale(0.9); }
+        .camera-icon::before { content: ""; position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 14px; height: 4px; background-color: #ffcce0; border-radius: 2px 2px 0 0; }
+        .camera-icon-lens { width: 16px; height: 16px; background: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .camera-icon-lens::after { content: ""; width: 6px; height: 6px; background: #ffcce0; border-radius: 50%; }
+        
+        .title-text { font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 600; letter-spacing: -0.02em; background: linear-gradient(90deg, #d8549e 0%, #765deb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; line-height: 1.1; }
+        .subtitle-text { color: #8c98a4; font-size: 0.8rem; margin-top: 0.3rem; margin-bottom: 0.8rem; font-weight: 500; }
 
-        .instax-card {
-            background: #ffffff;
-            padding: 16px 16px 64px 16px;
-            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.08);
-            border-radius: 4px;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
+        /* --- 極大化照片舞台 (Stage) --- */
+        .stage { width: 100%; height: 400px; display: flex; justify-content: center; align-items: center; margin-bottom: 0.8rem; }
+        .instax-frame { background: #ffffff; box-shadow: var(--card-shadow); border-radius: 2px; padding: 12px 12px 52px 12px; transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; display: flex; flex-direction: column; }
+        
+        .size-mini { width: 230px; height: 360px; }
+        .size-square { width: 310px; height: 360px; }
+        .size-wide { width: 360px; height: 280px; }
+        
+        .photo-area { width: 100%; height: 100%; background-color: #fbfbfc; position: relative; overflow: hidden; cursor: pointer; border: 1px solid #f1f5f9; border-radius: 1px; }
+        .dashed-border { position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; border: 1.5px dashed #e2e8f0; pointer-events: none; border-radius: 2px; }
+        
+        .upload-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 2; }
+        .upload-icon { width: 36px; height: 36px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; color: #ff8da1; font-size: 1.2rem; margin-bottom: 8px; }
+        .upload-text { color: #cbd5e1; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-align: center; white-space: nowrap; }
 
-        .developing { animation: soft-develop 5s ease-out forwards; }
-        @keyframes soft-develop {
-            0% { filter: contrast(120%) brightness(150%) blur(8px); opacity: 0; }
-            100% { filter: contrast(100%) brightness(100%) blur(0); opacity: 1; }
-        }
+        .drag-hint { position: absolute; top: 8px; left: 0; width: 100%; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.4); z-index: 15; pointer-events: none; display: none; animation: pulseHint 2s infinite; }
+        @keyframes pulseHint { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
 
-        .control-panel {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 32px;
-            padding: 24px;
-            width: 100%;
-            max-width: 360px;
+        #preview-image { position: absolute; top: 0; left: 0; transform-origin: 0 0; z-index: 5; display: none; opacity: 0; max-width: none !important; max-height: none !important; }
+        
+        @keyframes developing {
+            0% { opacity: 0; filter: brightness(2) contrast(0.8) blur(8px); }
+            30% { opacity: 0.6; filter: brightness(1.5) contrast(0.9) saturate(0.5) blur(3px); }
+            100% { opacity: 1; filter: sepia(0.2) hue-rotate(-5deg) saturate(0.85) brightness(1.08) contrast(1.05) blur(0.3px); }
         }
+        .instax-effect { animation: developing 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        
+        .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.15) 150%); display: none; }
+        .handwriting-input { position: absolute; bottom: 14px; left: 0; width: 100%; text-align: center; border: none; background: transparent; outline: none; font-family: 'Nanum Pen Script', cursive; font-size: 24px; color: #8c98a4; z-index: 20; }
+        .handwriting-input::placeholder { color: #cbd5e1; }
 
-        .btn-main {
-            background: linear-gradient(90deg, #6366f1, #a855f7);
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        #custom-text {
-            font-family: 'Nanum Pen Script', cursive;
-            font-size: 28px;
-            background: transparent;
-            border: none;
-            text-align: center;
-            width: 100%;
-            color: #64748b;
-            outline: none;
-        }
-
-        .size-tag {
-            cursor: pointer;
-            padding: 8px 16px;
-            border-radius: 99px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-        }
-
-        .size-tag.active { background: #1e293b; color: white; }
+        /* --- 緊湊控制面板 --- */
+        .controls-panel { background: #ffffff; width: 90%; max-width: 380px; border-radius: 26px; padding: 18px 24px; box-shadow: var(--card-shadow); margin-bottom: 0.5rem; }
+        .tabs { display: flex; justify-content: space-between; margin-bottom: 18px; padding: 0 10px; }
+        .tab-item { font-size: 0.65rem; font-weight: 700; color: #cbd5e1; cursor: pointer; padding-bottom: 6px; position: relative; letter-spacing: 0.05em; transition: color 0.2s; }
+        .tab-item.active { color: #ff8da1; }
+        .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: -10%; width: 120%; height: 2px; background-color: #ff8da1; border-radius: 2px; }
+        .action-btn { width: 100%; padding: 14px 0; border-radius: 99px; background: var(--btn-gradient); color: white; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.1em; border: none; cursor: pointer; box-shadow: 0 6px 15px rgba(255, 141, 161, 0.3); transition: transform 0.1s; }
+        .action-btn:active { transform: scale(0.98); }
+        .secondary-btn { width: 100%; margin-top: 10px; padding: 10px 0; border-radius: 99px; background: transparent; border: 2px solid #e2e8f0; color: #8c98a4; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+        .secondary-btn:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+        .footer-text { text-align: center; margin-top: 16px; font-size: 0.6rem; font-weight: 700; color: #cbd5e1; letter-spacing: 0.05em; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .footer-text::before, .footer-text::after { content: ""; display: block; width: 30px; height: 1px; background-color: #edf2f7; }
     </style>
 </head>
 <body>
-    <div class="blob"></div>
 
-    <header class="mt-16 mb-12 text-center">
-        <h1 class="text-5xl font-extrabold tracking-tighter text-slate-900">Aeterna<span class="text-indigo-500">.</span></h1>
-        <p class="text-slate-400 mt-4 text-xs font-bold tracking-[0.3em] uppercase opacity-80">捕獲瞬間，鍍上永恆</p>
-    </header>
-
-    <div id="instax-container" class="instax-card w-[300px] mb-12">
-        <div id="drop-zone" onclick="document.getElementById('file-input').click()" class="aspect-[4/5] bg-slate-50 border border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition">
-            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Select Image</p>
-        </div>
-        <img id="preview-img" class="hidden w-full aspect-[4/5] object-cover" src="">
-        <div class="absolute bottom-5 left-0 w-full px-4">
-            <input type="text" id="custom-text" placeholder="Add a memory..." maxlength="20">
-        </div>
+    <div class="bg-layer">
+        <div class="floating-instax fi-1"></div><div class="floating-instax fi-2"></div>
+        <div class="floating-instax fi-3"></div><div class="floating-instax fi-4"></div>
     </div>
 
-    <div class="control-panel mb-20">
-        <div class="flex justify-between mb-8">
-            <span onclick="switchSize('mini', this)" class="size-tag">MINI</span>
-            <span onclick="switchSize('square', this)" class="size-tag active">SQUARE</span>
-            <span onclick="switchSize('wide', this)" class="size-tag">WIDE</span>
+    <div class="main-wrapper">
+        <div class="camera-icon"><div class="camera-icon-lens"></div></div>
+        <h1 class="title-text">Aeterna</h1>
+        <p class="subtitle-text">為你的照片加上可愛的即可拍相框與濾鏡 ✨</p>
+
+        <div class="stage">
+            <div id="instax-frame-to-print" class="instax-frame size-square">
+                <div class="photo-area" id="photo-container">
+                    <div class="dashed-border" id="dashed-border"></div>
+                    <div class="upload-wrapper" id="upload-wrapper" onclick="document.getElementById('file-input').click()" style="cursor: pointer;">
+                        <div class="upload-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </div>
+                        <div class="upload-text">START CREATING</div>
+                    </div>
+                    
+                    <img id="preview-image" src="" alt="preview">
+                    <div id="photo-overlay" class="photo-overlay"></div>
+                    <div id="drag-hint" class="drag-hint">雙指縮放 / 拖曳構圖</div>
+                </div>
+                <input type="text" id="handwriting-input" class="handwriting-input" placeholder="Tap to write..." maxlength="20">
+            </div>
         </div>
 
-        <input type="file" id="file-input" class="hidden" accept="image/*" onchange="handleImage(this)">
-        
-        <button id="checkout-btn" onclick="startCheckout()" class="btn-main w-full py-4 rounded-2xl font-bold text-xs tracking-[0.2em] uppercase mb-4">
-            即刻沖印 $299
-        </button>
-        
-        <p class="text-[9px] text-center text-slate-400 font-bold tracking-widest uppercase">
-            320g Cotton Paper · Wooden Stand · Free Shipping
-        </p>
+        <div class="controls-panel">
+            <div class="tabs">
+                <div class="tab-item" onclick="changeSize('mini', this)">MINI</div>
+                <div class="tab-item active" onclick="changeSize('square', this)">SQUARE</div>
+                <div class="tab-item" onclick="changeSize('wide', this)">WIDE</div>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept="image/*" onchange="handleImageUpload(this)">
+            <button class="action-btn" onclick="submitOrder()">立即沖印珍藏</button>
+            <button class="secondary-btn" onclick="downloadInstax()">免費下載分享</button>
+            <div class="footer-text">PREMIUM QUALITY</div>
+        </div>
     </div>
 
     <script>
-        // --- 初始化 EmailJS ---
-        (function(){
-            emailjs.init("RbYyJfklDsrBN3fFk"); // Public Key
-        })();
+        (function(){ emailjs.init("RbYyJfklDsrBN3fFk"); })();
+        let panzoomInstance = null;
 
-        function handleImage(input) {
+        function fitImageToContainer() {
+            const img = document.getElementById('preview-image');
+            const container = document.getElementById('photo-container');
+            if (!img.naturalWidth) return;
+
+            const cw = container.clientWidth;
+            const ch = container.clientHeight;
+            const imgRatio = img.naturalWidth / img.naturalHeight;
+            const containerRatio = cw / ch;
+
+            let finalWidth, finalHeight;
+            if (imgRatio > containerRatio) {
+                finalHeight = ch;
+                finalWidth = ch * imgRatio;
+            } else {
+                finalWidth = cw;
+                finalHeight = cw / imgRatio;
+            }
+
+            img.style.width = finalWidth + 'px';
+            img.style.height = finalHeight + 'px';
+
+            if (panzoomInstance) {
+                panzoomInstance.destroy();
+            }
+
+            panzoomInstance = Panzoom(img, {
+                maxScale: 5,
+                minScale: 1,
+                contain: 'outside',
+                startScale: 1,
+                step: 0.1
+            });
+
+            const startX = (cw - finalWidth) / 2;
+            const startY = (ch - finalHeight) / 2;
+            
+            setTimeout(() => {
+                panzoomInstance.pan(startX, startY, { silent: true, force: true });
+            }, 0);
+        }
+
+        function handleImageUpload(input) {
             const file = input.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const img = document.getElementById('preview-img');
-                    const zone = document.getElementById('drop-zone');
-                    img.src = e.target.result;
-                    img.classList.remove('hidden', 'developing');
-                    zone.classList.add('hidden');
+                    const img = document.getElementById('preview-image');
+                    const overlay = document.getElementById('photo-overlay');
+                    const hint = document.getElementById('drag-hint');
+                    
+                    img.style.display = 'none';
+                    img.classList.remove('instax-effect');
                     void img.offsetWidth; 
-                    img.classList.add('developing');
+                    
+                    img.src = e.target.result;
+                    
+                    img.onload = () => {
+                        document.getElementById('dashed-border').style.display = 'none';
+                        document.getElementById('upload-wrapper').style.display = 'none';
+                        document.getElementById('photo-container').style.cursor = 'move';
+                        
+                        img.style.display = 'block';
+                        fitImageToContainer();
+                        img.classList.add('instax-effect'); 
+                        overlay.style.display = 'block'; 
+                        
+                        hint.style.display = 'block';
+                        setTimeout(() => { hint.style.display = 'none'; }, 3500);
+
+                        const container = document.getElementById('photo-container');
+                        container.addEventListener('wheel', (e) => {
+                            if(panzoomInstance) panzoomInstance.zoomWithWheel(e);
+                        }, { passive: false });
+                    };
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function switchSize(size, el) {
-            const card = document.getElementById('instax-container');
-            const tags = document.querySelectorAll('.size-tag');
-            tags.forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            if(size === 'mini') card.style.width = '240px';
-            else if(size === 'square') card.style.width = '300px';
-            else card.style.width = '380px';
+        function changeSize(size, element) {
+            const frame = document.getElementById('instax-frame-to-print');
+            frame.className = `instax-frame size-${size}`;
+            document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+            
+            if (panzoomInstance) {
+                setTimeout(() => { 
+                    fitImageToContainer();
+                }, 350); 
+            }
         }
 
-        async function startCheckout() {
-            if (document.getElementById('preview-img').classList.contains('hidden')) {
-                alert("請先上傳照片");
-                return;
-            }
-
-            const name = prompt("請輸入您的收件姓名：");
-            if (!name) return;
-            const phone = prompt("請輸入聯絡電話：");
-            if (!phone) return;
-
-            const btn = document.getElementById('checkout-btn');
-            btn.innerText = "Processing...";
+        // --- 核心更新：串接綠界真實金流連結 ---
+        async function submitOrder() {
+            const img = document.getElementById('preview-image');
+            if (img.style.display === 'none' || img.src === '') { alert("請先點擊相框上傳照片唷 ✨"); return; }
+            
+            const name = prompt("請輸入您的收件人姓名："); if (!name) return;
+            const phone = prompt("請輸入您的聯絡電話："); if (!phone) return;
+            const activeSize = document.querySelector('.tab-item.active').innerText;
+            
+            const btn = document.querySelector('.action-btn');
+            btn.innerText = "正在為您準備訂單...";
             btn.disabled = true;
-
+            
             try {
-                // --- 發送通知 ---
-                await emailjs.send("service_aeterna", "service_aeterna", {
-                    from_name: name,
-                    phone_number: phone,
-                    message: "Aeterna 實測訂單"
+                // 發送通知 Email 給管理員
+                await emailjs.send("service_aeterna", "service_aeterna", { 
+                    from_name: name, 
+                    phone_number: phone, 
+                    message: `尺寸: ${activeSize}` 
                 });
                 
-                alert("訂單已收到！請點擊確定，我們將導引您至測試支付頁面。");
-                window.location.href = "https://sandbox-api-pay.line.me/web/pay/login";
-            } catch (error) {
-                alert("通知發送出了一點小狀況，但沒關係，我們依然會為您跳轉。");
-                window.location.href = "https://sandbox-api-pay.line.me/web/pay/login";
+                alert("預約成功！即將前往安全付款頁面（支援 LINE Pay）。");
+                // 跳轉至綠界專屬收款連結
+                window.location.href = "https://p.ecpay.com.tw/3C83C78";
+            } catch (error) { 
+                // 即使 EmailJS 發送失敗，也確保引導用戶付款（不流失訂單）
+                alert("系統提示：即將前往安全付款頁面。");
+                window.location.href = "https://p.ecpay.com.tw/3C83C78"; 
             }
+        }
+
+        function downloadInstax() {
+            const img = document.getElementById('preview-image');
+            const inputField = document.getElementById('handwriting-input');
+            if (img.style.display === 'none' || img.src === '') { alert("請先上傳照片，才能下載唷 ✨"); return; }
+            
+            const originalPlaceholder = inputField.placeholder;
+            if (inputField.value === '') { inputField.placeholder = ''; }
+
+            const elementToCapture = document.getElementById('instax-frame-to-print');
+            const checkoutBtn = event.currentTarget;
+            checkoutBtn.innerText = "正在生成圖片...";
+            checkoutBtn.disabled = true;
+
+            html2canvas(elementToCapture, { scale: 2, backgroundColor: null, useCORS: true, logging: false })
+            .then(canvas => {
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = dataUrl; link.download = 'Aeterna_Instax_' + new Date().getTime() + '.png'; 
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+
+                checkoutBtn.innerText = "免費下載分享"; checkoutBtn.disabled = false; inputField.placeholder = originalPlaceholder; 
+                setTimeout(() => { alert("🎉 下載成功！\n記得發到 Instagram 限時動態，並 Tag @Aeterna_Studio 獲得沖印優惠唷！"); }, 500);
+            }).catch(error => {
+                alert("抱歉，生成圖片時發生錯誤。建議您使用手機內建的截圖功能唷。");
+                checkoutBtn.innerText = "免費下載分享"; checkoutBtn.disabled = false; inputField.placeholder = originalPlaceholder;
+            });
         }
     </script>
 </body>
