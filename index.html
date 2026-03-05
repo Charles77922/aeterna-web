@@ -29,7 +29,7 @@
             overflow-x: hidden; position: relative; margin: 0; padding-bottom: 1rem;
         }
 
-        /* --- 漂浮背景 (絕對安全區) --- */
+        /* --- 漂浮背景 --- */
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(var(--rot)); } 50% { transform: translateY(-12px) rotate(calc(var(--rot) + 2deg)); } }
         .floating-instax { position: absolute; width: 70px; height: 85px; background: rgba(255,255,255,0.8); padding: 4px 4px 15px 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-radius: 2px; animation: float 6s infinite ease-in-out; backdrop-filter: blur(2px); }
@@ -40,7 +40,7 @@
         .fi-4 { bottom: 12%; right: calc(50% - 280px); --rot: -15deg; animation-delay: -1s; }
         @media (max-width: 600px) { .fi-1 { left: -15px; } .fi-2 { right: -15px; } .fi-3 { left: -25px; } .fi-4 { right: -25px; opacity: 0.5; } }
 
-        /* --- 緊湊型主視覺區 --- */
+        /* --- 主視覺區 --- */
         .main-wrapper { position: relative; z-index: 10; width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; padding-top: 1.5rem; }
         .camera-icon { width: 42px; height: 32px; background-color: #ffcce0; border-radius: 6px; position: relative; margin-bottom: 0.2rem; display: flex; justify-content: center; align-items: center; transform: scale(0.9); }
         .camera-icon::before { content: ""; position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 14px; height: 4px; background-color: #ffcce0; border-radius: 2px 2px 0 0; }
@@ -50,7 +50,7 @@
         .title-text { font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 600; letter-spacing: -0.02em; background: linear-gradient(90deg, #d8549e 0%, #765deb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; line-height: 1.1; }
         .subtitle-text { color: #8c98a4; font-size: 0.8rem; margin-top: 0.3rem; margin-bottom: 0.8rem; font-weight: 500; }
 
-        /* --- 極大化照片舞台 --- */
+        /* --- 照片舞台 --- */
         .stage { width: 100%; height: 400px; display: flex; justify-content: center; align-items: center; margin-bottom: 0.8rem; }
         .instax-frame { background: #ffffff; box-shadow: var(--card-shadow); border-radius: 2px; padding: 12px 12px 52px 12px; transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; display: flex; flex-direction: column; }
         
@@ -68,21 +68,26 @@
         .drag-hint { position: absolute; top: 8px; left: 0; width: 100%; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.4); z-index: 15; pointer-events: none; display: none; animation: pulseHint 2s infinite; }
         @keyframes pulseHint { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
 
-        #preview-image { position: absolute; top: 0; left: 0; transform-origin: 0 0; z-index: 5; display: none; opacity: 0; max-width: none !important; max-height: none !important; }
+        #preview-image { position: absolute; top: 0; left: 0; transform-origin: 0 0; z-index: 5; display: none; opacity: 1; max-width: none !important; max-height: none !important; }
         
-        /* 浪漫顯影濾鏡：人像特化版 (Fuji Instax Profile) */
+        /* ⭐️ 升級 1：神級物理化學顯影動畫 */
         @keyframes developing {
-            0% { opacity: 0; filter: brightness(0.5) contrast(1.2) grayscale(0.8) sepia(0.5) hue-rotate(180deg); }
-            40% { opacity: 0.8; filter: brightness(1.4) contrast(0.9) saturate(0.5) sepia(0.1); }
-            100% { opacity: 1; filter: contrast(1.15) brightness(1.1) saturate(1.1) sepia(0.15) hue-rotate(-5deg); }
+            /* 剛拍出來：底片閃光燈全白過曝 */
+            0% { filter: brightness(4) contrast(0.5) saturate(0); }
+            /* 前期顯影：冷調的青灰色、暗部偏綠 (模擬化學藥劑作用) */
+            30% { filter: brightness(1.5) contrast(0.7) saturate(0.3) sepia(0.6) hue-rotate(150deg); }
+            /* 後期顯影：顏色開始溫暖起來 */
+            60% { filter: brightness(1.2) contrast(0.9) saturate(0.8) sepia(0.3) hue-rotate(0deg); }
+            /* 最終成果：富士高級人像濾鏡 (白裡透紅、高立體感) */
+            100% { filter: contrast(1.15) brightness(1.08) saturate(1.2) sepia(0.18) hue-rotate(-5deg); }
         }
         .instax-effect { animation: developing 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         
-        /* 物理相機感：鏡頭暗角 (Vignette) 與中央高光 */
+        /* ⭐️ 升級 1：實體鏡頭暗角，讓視覺強制集中在人臉 */
         .photo-overlay { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: none;
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.2) 100%); 
-            mix-blend-mode: multiply; 
+            /* 中央透明，邊緣帶有溫暖的深褐色暗角 */
+            background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 50%, rgba(60, 30, 20, 0.25) 100%); 
         }
         
         .handwriting-input { position: absolute; bottom: 14px; left: 0; width: 100%; text-align: center; border: none; background: transparent; outline: none; font-family: 'Nanum Pen Script', cursive; font-size: 24px; color: #8c98a4; z-index: 20; }
@@ -251,6 +256,7 @@
             }
         }
 
+        // ⭐️ 升級 2：原生分享體驗，直達 iPhone 相簿與 IG
         function downloadInstax() {
             const img = document.getElementById('preview-image');
             const inputField = document.getElementById('handwriting-input');
@@ -262,7 +268,6 @@
             checkoutBtn.disabled = true;
 
             const textVal = inputField.value;
-            const originalPlaceholder = inputField.placeholder;
             const textDiv = document.createElement('div');
             textDiv.innerText = textVal; 
             textDiv.style.position = 'absolute';
@@ -280,10 +285,9 @@
 
             img.classList.remove('instax-effect');
             img.style.animation = 'none';
-            img.style.opacity = '1';
             
-            // 替換為全新的人像特化版濾鏡
-            img.style.filter = 'contrast(1.15) brightness(1.1) saturate(1.1) sepia(0.15) hue-rotate(-5deg)';
+            // 下載截圖時固定使用高級感富士濾鏡參數
+            img.style.filter = 'contrast(1.15) brightness(1.08) saturate(1.2) sepia(0.18) hue-rotate(-5deg)';
             
             void img.offsetWidth;
 
@@ -296,16 +300,35 @@
                     allowTaint: true
                 }).then(canvas => {
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-                    const link = document.createElement('a');
-                    link.href = dataUrl; link.download = 'Aeterna_Instax_' + new Date().getTime() + '.jpg'; 
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-
+                    
+                    // 截圖完成後，先立刻把畫面上的按鈕跟輸入框復原
                     checkoutBtn.innerText = "免費下載分享"; 
                     checkoutBtn.disabled = false; 
                     elementToCapture.removeChild(textDiv);
                     inputField.style.display = 'block';
-                    
-                    setTimeout(() => { alert("🎉 高清下載成功！\n記得發到 Instagram 限時動態，並 Tag @aeterna_ewig 獲得沖印優惠唷！"); }, 500);
+
+                    // 判斷手機瀏覽器是否支援超強的「原生 Share API」
+                    if (navigator.share) {
+                        // 將圖片轉化為手機看得懂的 File 檔案格式
+                        fetch(dataUrl)
+                            .then(res => res.blob())
+                            .then(blob => {
+                                const file = new File([blob], 'Aeterna_Instax.jpg', { type: 'image/jpeg' });
+                                // 呼叫出 iPhone / Android 底層的分享選單
+                                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                                    navigator.share({
+                                        files: [file],
+                                        title: 'Aeterna 浪漫即可拍',
+                                        text: '我的專屬 Aeterna 即可拍！ @aeterna_ewig'
+                                    }).catch(console.error);
+                                } else {
+                                    fallbackDownload(dataUrl);
+                                }
+                            });
+                    } else {
+                        // 如果是舊手機或電腦版，退回傳統下載模式
+                        fallbackDownload(dataUrl);
+                    }
                 }).catch(error => {
                     alert("抱歉，生成圖片時發生錯誤。建議您使用手機內建的截圖功能唷。");
                     checkoutBtn.innerText = "免費下載分享"; checkoutBtn.disabled = false; 
@@ -313,6 +336,14 @@
                     inputField.style.display = 'block';
                 });
             }, 150);
+        }
+
+        // 傳統的下載備案模式
+        function fallbackDownload(url) {
+            const link = document.createElement('a');
+            link.href = url; link.download = 'Aeterna_Instax_' + new Date().getTime() + '.jpg'; 
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            setTimeout(() => { alert("🎉 下載成功！\n記得發到 Instagram 限時動態，並 Tag @aeterna_ewig 獲得沖印優惠唷！"); }, 500);
         }
     </script>
 </body>
