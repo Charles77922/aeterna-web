@@ -52,40 +52,27 @@
 
         /* --- 照片舞台 --- */
         .stage { width: 100%; height: 400px; display: flex; justify-content: center; align-items: center; margin-bottom: 0.8rem; }
-        .instax-frame { background: #ffffff; box-shadow: var(--card-shadow); border-radius: 2px; padding: 12px 12px 52px 12px; transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; display: flex; flex-direction: column; }
+        
+        /* ⭐️ 質感升級：相框紙張厚度與光澤感 */
+        .instax-frame { 
+            background: linear-gradient(135deg, #ffffff 0%, #fcfcfd 50%, #f4f5f8 100%); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0,0,0,0.04);
+            border-radius: 2px; padding: 12px 12px 52px 12px; transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; display: flex; flex-direction: column; 
+        }
         
         .size-mini { width: 230px; height: 360px; }
         .size-square { width: 310px; height: 360px; }
         .size-wide { width: 360px; height: 280px; }
         
-        .photo-area { width: 100%; height: 100%; background-color: #fbfbfc; position: relative; overflow: hidden; cursor: pointer; border: 1px solid #f1f5f9; border-radius: 1px; }
+        .photo-area { width: 100%; height: 100%; background-color: #fbfbfc; position: relative; overflow: hidden; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 1px; }
         .dashed-border { position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; border: 1.5px dashed #e2e8f0; pointer-events: none; border-radius: 2px; }
         
         .upload-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 2; }
         .upload-icon { width: 36px; height: 36px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; color: #ff8da1; font-size: 1.2rem; margin-bottom: 8px; }
         .upload-text { color: #cbd5e1; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-align: center; white-space: nowrap; }
 
-        /* ⭐️ 新增：直覺換照片懸浮按鈕 */
         .reupload-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            color: #475569;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: none; /* 預設隱藏，上傳後顯示 */
-            align-items: center;
-            gap: 6px;
-            z-index: 50;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.9);
-            transition: all 0.2s ease;
+            position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #475569; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: none; align-items: center; gap: 6px; z-index: 50; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.9); transition: all 0.2s ease;
         }
         .reupload-btn:active { transform: scale(0.95); }
 
@@ -94,7 +81,7 @@
 
         #preview-image { position: absolute; top: 0; left: 0; transform-origin: 0 0; z-index: 5; display: none; opacity: 1; max-width: none !important; max-height: none !important; }
         
-        /* 神級物理化學顯影動畫 */
+        /* 物理化學顯影動畫 */
         @keyframes developing {
             0% { filter: brightness(4) contrast(0.5) saturate(0); }
             30% { filter: brightness(1.5) contrast(0.7) saturate(0.3) sepia(0.6) hue-rotate(150deg); }
@@ -103,14 +90,40 @@
         }
         .instax-effect { animation: developing 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         
-        /* 實體鏡頭暗角，讓視覺強制集中在人臉 */
+        /* ⭐️ 質感升級：相紙雙層內陰影凹陷感 + 實體鏡頭暗角 */
         .photo-overlay { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: none;
             background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 50%, rgba(60, 30, 20, 0.25) 100%); 
+            box-shadow: inset 0px 4px 12px rgba(0,0,0,0.25), inset 0px 1px 3px rgba(0,0,0,0.15); 
         }
+
+        /* ⭐️ 質感升級：高級銀鹽底片顆粒 */
+        .noise-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 12; pointer-events: none; display: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+            opacity: 0.12; 
+        }
+
+        /* ⭐️ 質感升級：顯影時的魔幻漏光閃爍 */
+        .light-leak {
+            position: absolute; top: 0; left: -100%; width: 150%; height: 100%; z-index: 11; pointer-events: none; display: none;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 120, 50, 0.5) 40%, rgba(255, 50, 50, 0.6) 60%, transparent 100%);
+            mix-blend-mode: screen; filter: blur(12px);
+        }
+        @keyframes lightSweep {
+            0% { transform: translateX(-10%) skewX(-20deg); opacity: 0; }
+            15% { opacity: 1; transform: translateX(10%) skewX(-20deg); }
+            85% { opacity: 0.8; transform: translateX(80%) skewX(-20deg); }
+            100% { transform: translateX(120%) skewX(-20deg); opacity: 0; }
+        }
+        .light-leak-anim { animation: lightSweep 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         
-        .handwriting-input { position: absolute; bottom: 14px; left: 0; width: 100%; text-align: center; border: none; background: transparent; outline: none; font-family: 'Nanum Pen Script', cursive; font-size: 24px; color: #8c98a4; z-index: 20; }
-        .handwriting-input::placeholder { color: #cbd5e1; }
+        /* ⭐️ 質感升級：奇異筆真實墨水手寫字 */
+        .handwriting-input { 
+            position: absolute; bottom: 14px; left: 0; width: 100%; text-align: center; border: none; background: transparent; outline: none; 
+            font-family: 'Nanum Pen Script', cursive; font-size: 28px; font-weight: 600; color: #334155; text-shadow: 0px 1px 1px rgba(0,0,0,0.05); z-index: 20; 
+        }
+        .handwriting-input::placeholder { color: #cbd5e1; font-weight: 400; text-shadow: none; }
 
         /* --- 緊湊控制面板 --- */
         .controls-panel { background: #ffffff; width: 90%; max-width: 380px; border-radius: 26px; padding: 18px 24px; box-shadow: var(--card-shadow); margin-bottom: 0.5rem; }
@@ -161,6 +174,8 @@
                     
                     <img id="preview-image" src="" alt="preview">
                     <div id="photo-overlay" class="photo-overlay"></div>
+                    <div id="noise-overlay" class="noise-overlay"></div>
+                    <div id="light-leak" class="light-leak"></div>
                     <div id="drag-hint" class="drag-hint">雙指縮放 / 拖曳構圖</div>
                 </div>
                 <input type="text" id="handwriting-input" class="handwriting-input" placeholder="Tap to write..." maxlength="20">
@@ -224,8 +239,9 @@
                 reader.onload = (e) => {
                     const img = document.getElementById('preview-image');
                     const overlay = document.getElementById('photo-overlay');
+                    const noiseOverlay = document.getElementById('noise-overlay');
                     const hint = document.getElementById('drag-hint');
-                    const reuploadBtn = document.getElementById('reupload-btn'); // 取得換照片按鈕
+                    const reuploadBtn = document.getElementById('reupload-btn');
                     
                     img.style.display = 'none';
                     img.classList.remove('instax-effect');
@@ -242,8 +258,15 @@
                         fitImageToContainer();
                         img.classList.add('instax-effect'); 
                         overlay.style.display = 'block'; 
+                        noiseOverlay.style.display = 'block';
                         
-                        // ⭐️ 照片成功載入後，顯示「換照片」按鈕
+                        // 觸發漏光動畫
+                        const lightLeak = document.getElementById('light-leak');
+                        lightLeak.style.display = 'block';
+                        lightLeak.classList.remove('light-leak-anim');
+                        void lightLeak.offsetWidth; 
+                        lightLeak.classList.add('light-leak-anim');
+                        
                         reuploadBtn.style.display = 'flex';
                         
                         hint.style.display = 'block';
@@ -289,11 +312,10 @@
             }
         }
 
-        // 原生分享體驗與聰明的隱身術
         function downloadInstax() {
             const img = document.getElementById('preview-image');
             const inputField = document.getElementById('handwriting-input');
-            const reuploadBtn = document.getElementById('reupload-btn'); // 取得換照片按鈕
+            const reuploadBtn = document.getElementById('reupload-btn'); 
 
             if (img.style.display === 'none' || img.src === '') { alert("請先上傳照片，才能下載唷 ✨"); return; }
             
@@ -302,8 +324,8 @@
             checkoutBtn.innerText = "正在為您製作照片...";
             checkoutBtn.disabled = true;
 
-            // ⭐️ 截圖前：先把它隱藏起來，避免被拍進最終照片裡
             reuploadBtn.style.display = 'none';
+            document.getElementById('light-leak').style.display = 'none'; // 隱藏動態漏光確保截圖乾淨
 
             const textVal = inputField.value;
             const textDiv = document.createElement('div');
@@ -314,8 +336,10 @@
             textDiv.style.width = '100%';
             textDiv.style.textAlign = 'center';
             textDiv.style.fontFamily = "'Nanum Pen Script', cursive";
-            textDiv.style.fontSize = '24px';
-            textDiv.style.color = '#8c98a4';
+            textDiv.style.fontSize = '28px';
+            textDiv.style.fontWeight = '600';
+            textDiv.style.color = '#334155';
+            textDiv.style.textShadow = '0px 1px 1px rgba(0,0,0,0.05)';
             textDiv.style.zIndex = '20';
             
             inputField.style.display = 'none';
@@ -341,10 +365,9 @@
                     checkoutBtn.disabled = false; 
                     elementToCapture.removeChild(textDiv);
                     inputField.style.display = 'block';
-                    
-                    // ⭐️ 截圖完成後：把換照片按鈕恢復顯示
                     reuploadBtn.style.display = 'flex';
 
+                    // ⭐️ 完美呼叫 iPhone 原生分享/儲存面板
                     if (navigator.share) {
                         fetch(dataUrl)
                             .then(res => res.blob())
@@ -368,8 +391,6 @@
                     checkoutBtn.innerText = "免費下載分享"; checkoutBtn.disabled = false; 
                     elementToCapture.removeChild(textDiv);
                     inputField.style.display = 'block';
-                    
-                    // ⭐️ 發生錯誤時也要記得恢復按鈕
                     reuploadBtn.style.display = 'flex';
                 });
             }, 150);
