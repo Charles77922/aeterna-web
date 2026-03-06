@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aeterna | 5s Instax Frame</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Nanum+Pen+Script&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Klee+One:wght@600&family=Fredoka:wght@600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
@@ -70,7 +70,6 @@
         .upload-icon { width: 36px; height: 36px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; color: #ff8da1; font-size: 1.2rem; margin-bottom: 8px; }
         .upload-text { color: #cbd5e1; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-align: center; white-space: nowrap; }
 
-        /* 換照片按鈕 */
         .reupload-btn {
             position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #475569; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: none; align-items: center; gap: 6px; z-index: 50; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.9); transition: all 0.2s ease;
         }
@@ -81,7 +80,7 @@
 
         #preview-image { position: absolute; top: 0; left: 0; transform-origin: 0 0; z-index: 5; display: none; opacity: 1; max-width: none !important; max-height: none !important; }
         
-        /* 1. 日系空氣 (Ethereal) */
+        /* 動畫設定 */
         @keyframes dev-ethereal {
             0% { filter: brightness(4) contrast(0.5) saturate(0); }
             30% { filter: brightness(1.8) contrast(0.6) saturate(0.2) sepia(0.2) hue-rotate(180deg); }
@@ -93,7 +92,6 @@
             box-shadow: inset 0px 2px 8px rgba(0,0,0,0.1); 
         }
 
-        /* 2. 經典復古 (Nostalgic) */
         @keyframes dev-nostalgic {
             0% { filter: brightness(4) contrast(0.5) saturate(0); }
             30% { filter: brightness(1.5) contrast(0.7) saturate(0.3) sepia(0.6) hue-rotate(150deg); }
@@ -105,7 +103,6 @@
             box-shadow: inset 0px 4px 12px rgba(0,0,0,0.25), inset 0px 1px 3px rgba(0,0,0,0.15); 
         }
 
-        /* 3. 街頭漏光 (Y2K Pop) */
         @keyframes dev-y2k {
             0% { filter: brightness(4) contrast(0.5) saturate(0); }
             30% { filter: brightness(1.6) contrast(0.8) saturate(0.5) sepia(0.4) hue-rotate(90deg); }
@@ -137,6 +134,17 @@
         }
         .light-leak-anim { animation: lightSweep 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         
+        /* ⭐️ 升級 2：風格切換時的化學色彩沖刷與對焦特效 */
+        .style-transition-flash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 14; pointer-events: none; opacity: 0;
+            mix-blend-mode: overlay; display: none; /* 上傳後才啟用 */
+        }
+        @keyframes styleWash {
+            0% { opacity: 1; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+            100% { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
+        }
+        .play-flash { animation: styleWash 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
         .static-leak {
             position: absolute; top: 0; right: 0; width: 35%; height: 100%; z-index: 11; pointer-events: none; display: none;
             background: linear-gradient(90deg, transparent 0%, rgba(255, 60, 0, 0.1) 60%, rgba(255, 0, 0, 0.25) 100%);
@@ -145,23 +153,23 @@
 
         .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: none; transition: all 0.5s; }
 
+        /* ⭐️ 升級 1：套用全新的手寫字體組合 */
         .handwriting-input { 
             position: absolute; bottom: 14px; left: 0; width: 100%; text-align: center; border: none; background: transparent; outline: none; 
-            font-family: 'Nanum Pen Script', cursive; font-size: 28px; font-weight: 600; color: #334155; text-shadow: 0px 1px 1px rgba(0,0,0,0.05); z-index: 20; 
+            font-family: 'Caveat', 'Klee One', cursive; /* 完美中英搭配 */
+            font-size: 28px; font-weight: 600; color: #334155; text-shadow: 0px 1px 1px rgba(0,0,0,0.05); z-index: 20; 
         }
-        .handwriting-input::placeholder { color: #cbd5e1; font-weight: 400; text-shadow: none; }
+        .handwriting-input::placeholder { color: #cbd5e1; font-weight: 400; text-shadow: none; font-family: 'Noto Sans TC', sans-serif; font-size: 20px;}
 
-        /* --- ⭐️ 全新控制面板：保證手機看得清楚點得到 --- */
+        /* --- 控制面板 --- */
         .controls-panel { background: #ffffff; width: 92%; max-width: 380px; border-radius: 20px; padding: 16px 20px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 14px; }
         
-        /* 尺寸區塊 */
         .control-group { display: flex; flex-direction: column; gap: 6px; }
         .control-label { font-size: 0.65rem; font-weight: 700; color: #94a3b8; letter-spacing: 0.05em; margin-left: 4px; }
         .size-tabs { display: flex; background: #f8fafc; border-radius: 12px; padding: 4px; }
         .size-tabs .tab-item { flex: 1; text-align: center; padding: 8px 0; font-size: 0.65rem; font-weight: 700; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .size-tabs .tab-item.active { background: #ffffff; color: #ff8da1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         
-        /* ⭐️ 風格區塊：用明顯的按鈕取代底線 */
         .style-tabs { display: flex; gap: 6px; }
         .style-tabs .tab-item { flex: 1; text-align: center; padding: 10px 0; font-size: 0.75rem; font-weight: 700; color: #64748b; background: #f1f5f9; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
         .style-tabs .tab-item.active { background: #fff0f5; color: #d8549e; border-color: #ffcce0; box-shadow: 0 4px 10px rgba(255,204,224,0.4); }
@@ -175,21 +183,10 @@
         .footer-text { text-align: center; margin-top: 4px; font-size: 0.6rem; font-weight: 700; color: #cbd5e1; letter-spacing: 0.05em; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .footer-text::before, .footer-text::after { content: ""; display: block; width: 30px; height: 1px; background-color: #edf2f7; }
 
-        /* ⭐️ 手機版長按儲存遮罩 */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(5px); z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-content {
-            width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; position: relative;
-        }
-        .modal-close {
-            position: absolute; top: -40px; right: 0; color: white; font-size: 1.5rem; background: none; border: none; font-weight: bold; cursor: pointer;
-        }
-        .modal-img {
-            width: 100%; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            /* 讓圖片可以被手機原生系統選取長按 */
-            pointer-events: auto; user-select: auto; -webkit-user-select: auto; -webkit-touch-callout: default;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(5px); z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .modal-close { position: absolute; top: -40px; right: 0; color: white; font-size: 1.5rem; background: none; border: none; font-weight: bold; cursor: pointer; }
+        .modal-img { width: 100%; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); pointer-events: auto; user-select: auto; -webkit-user-select: auto; -webkit-touch-callout: default; }
         .modal-hint { color: #fff; margin-top: 24px; font-weight: 700; letter-spacing: 0.1em; font-size: 0.9rem; animation: pulseHint 2s infinite; }
         .modal-subhint { color: #94a3b8; margin-top: 8px; font-size: 0.7rem; }
     </style>
@@ -233,13 +230,16 @@
                     </div>
                     
                     <img id="preview-image" src="" alt="preview">
+                    
+                    <div id="style-transition-flash" class="style-transition-flash"></div>
+                    
                     <div id="photo-overlay" class="photo-overlay"></div>
                     <div id="noise-overlay" class="noise-overlay"></div>
                     <div id="light-leak" class="light-leak"></div>
                     <div class="static-leak"></div>
                     <div id="drag-hint" class="drag-hint">雙指縮放 / 拖曳構圖</div>
                 </div>
-                <input type="text" id="handwriting-input" class="handwriting-input" placeholder="Tap to write..." maxlength="20">
+                <input type="text" id="handwriting-input" class="handwriting-input" placeholder="點擊這裡寫下想說的話..." maxlength="20">
             </div>
         </div>
 
@@ -287,10 +287,8 @@
             const container = document.getElementById('photo-container');
             if (!img.naturalWidth) return;
 
-            const cw = container.clientWidth;
-            const ch = container.clientHeight;
-            const imgRatio = img.naturalWidth / img.naturalHeight;
-            const containerRatio = cw / ch;
+            const cw = container.clientWidth; const ch = container.clientHeight;
+            const imgRatio = img.naturalWidth / img.naturalHeight; const containerRatio = cw / ch;
 
             let finalWidth, finalHeight;
             if (imgRatio > containerRatio) { finalHeight = ch; finalWidth = ch * imgRatio; } 
@@ -313,13 +311,11 @@
                     const img = document.getElementById('preview-image');
                     const overlay = document.getElementById('photo-overlay');
                     const noiseOverlay = document.getElementById('noise-overlay');
+                    const flash = document.getElementById('style-transition-flash');
                     const hint = document.getElementById('drag-hint');
                     const reuploadBtn = document.getElementById('reupload-btn');
                     
-                    img.style.display = 'none';
-                    img.classList.remove('instax-effect');
-                    void img.offsetWidth; 
-                    
+                    img.style.display = 'none'; img.classList.remove('instax-effect'); void img.offsetWidth; 
                     img.src = e.target.result;
                     
                     img.onload = () => {
@@ -332,16 +328,14 @@
                         img.classList.add('instax-effect'); 
                         overlay.style.display = 'block'; 
                         noiseOverlay.style.display = 'block';
+                        flash.style.display = 'block'; // 上傳後才啟用轉場遮罩
                         
                         const lightLeak = document.getElementById('light-leak');
-                        lightLeak.style.display = 'block';
-                        lightLeak.classList.remove('light-leak-anim');
-                        void lightLeak.offsetWidth; 
-                        lightLeak.classList.add('light-leak-anim');
+                        lightLeak.style.display = 'block'; lightLeak.classList.remove('light-leak-anim');
+                        void lightLeak.offsetWidth; lightLeak.classList.add('light-leak-anim');
                         
                         reuploadBtn.style.display = 'flex';
-                        hint.style.display = 'block';
-                        setTimeout(() => { hint.style.display = 'none'; }, 3500);
+                        hint.style.display = 'block'; setTimeout(() => { hint.style.display = 'none'; }, 3500);
 
                         const container = document.getElementById('photo-container');
                         container.addEventListener('wheel', (e) => { if(panzoomInstance) panzoomInstance.zoomWithWheel(e); }, { passive: false });
@@ -369,6 +363,20 @@
 
             const img = document.getElementById('preview-image');
             if (img.src && img.style.display !== 'none') {
+                
+                // ⭐️ 觸發色彩沖刷與對焦特效
+                const flash = document.getElementById('style-transition-flash');
+                flash.classList.remove('play-flash');
+                void flash.offsetWidth; 
+                
+                // 根據不同風格給予不同的化學藥水色彩
+                if (style === 'ethereal') flash.style.background = 'rgba(255, 255, 255, 0.85)';
+                else if (style === 'nostalgic') flash.style.background = 'rgba(255, 180, 80, 0.5)';
+                else if (style === 'y2k') flash.style.background = 'rgba(255, 40, 40, 0.6)';
+                
+                flash.classList.add('play-flash');
+
+                // 重置顯影與漏光動畫
                 img.classList.remove('instax-effect'); void img.offsetWidth; img.classList.add('instax-effect');
                 const lightLeak = document.getElementById('light-leak');
                 lightLeak.classList.remove('light-leak-anim'); void lightLeak.offsetWidth; lightLeak.classList.add('light-leak-anim');
@@ -393,11 +401,11 @@
             }
         }
 
-        // ⭐️ 終極 iOS 下載解決方案：長按儲存彈窗
         function downloadInstax() {
             const img = document.getElementById('preview-image');
             const inputField = document.getElementById('handwriting-input');
             const reuploadBtn = document.getElementById('reupload-btn'); 
+            const flash = document.getElementById('style-transition-flash');
 
             if (img.style.display === 'none' || img.src === '') { alert("請先上傳照片，才能下載唷 ✨"); return; }
             
@@ -405,13 +413,17 @@
             const checkoutBtn = event.currentTarget;
             checkoutBtn.innerText = "正在為您製作照片..."; checkoutBtn.disabled = true;
 
+            // 截圖前隱藏不必要的 UI 和動態特效
             reuploadBtn.style.display = 'none';
             document.getElementById('light-leak').style.display = 'none';
+            flash.style.display = 'none'; 
 
             const textVal = inputField.value;
             const textDiv = document.createElement('div');
             textDiv.innerText = textVal; 
-            textDiv.style.position = 'absolute'; textDiv.style.bottom = '14px'; textDiv.style.left = '0'; textDiv.style.width = '100%'; textDiv.style.textAlign = 'center'; textDiv.style.fontFamily = "'Nanum Pen Script', cursive"; textDiv.style.fontSize = '28px'; textDiv.style.fontWeight = '600'; textDiv.style.color = '#334155'; textDiv.style.textShadow = '0px 1px 1px rgba(0,0,0,0.05)'; textDiv.style.zIndex = '20';
+            textDiv.style.position = 'absolute'; textDiv.style.bottom = '14px'; textDiv.style.left = '0'; textDiv.style.width = '100%'; textDiv.style.textAlign = 'center'; 
+            textDiv.style.fontFamily = "'Caveat', 'Klee One', cursive"; // 確保截圖時字體一致
+            textDiv.style.fontSize = '28px'; textDiv.style.fontWeight = '600'; textDiv.style.color = '#334155'; textDiv.style.textShadow = '0px 1px 1px rgba(0,0,0,0.05)'; textDiv.style.zIndex = '20';
             
             inputField.style.display = 'none';
             elementToCapture.appendChild(textDiv);
@@ -426,9 +438,8 @@
                     
                     checkoutBtn.innerText = "免費下載分享"; checkoutBtn.disabled = false; 
                     elementToCapture.removeChild(textDiv);
-                    inputField.style.display = 'block'; reuploadBtn.style.display = 'flex';
+                    inputField.style.display = 'block'; reuploadBtn.style.display = 'flex'; flash.style.display = 'block';
 
-                    // 呼叫全螢幕長按下載彈窗
                     const modal = document.getElementById('download-modal');
                     const modalImg = document.getElementById('final-result-img');
                     modalImg.src = dataUrl;
@@ -437,12 +448,11 @@
                 }).catch(error => {
                     alert("抱歉，生成圖片時發生錯誤。建議您使用手機內建的截圖功能唷。");
                     checkoutBtn.innerText = "免費下載分享"; checkoutBtn.disabled = false; 
-                    elementToCapture.removeChild(textDiv); inputField.style.display = 'block'; reuploadBtn.style.display = 'flex';
+                    elementToCapture.removeChild(textDiv); inputField.style.display = 'block'; reuploadBtn.style.display = 'flex'; flash.style.display = 'block';
                 });
             }, 150);
         }
 
-        // 關閉下載彈窗
         function closeModal() {
             document.getElementById('download-modal').style.display = 'none';
         }
